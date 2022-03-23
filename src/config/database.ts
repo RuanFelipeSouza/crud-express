@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { createConnection, Connection } from 'typeorm';
-import { Customer } from 'src/entity/customer.entity';
+import { CustomerEntity } from '../entities/customer.entity';
 
 export class Database {
   async connect(): Promise<Connection> {

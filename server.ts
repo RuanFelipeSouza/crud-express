@@ -1,12 +1,18 @@
 import express from 'express';
 import 'reflect-metadata';
+import { RouterController } from 'src/Router.controller';
 import { createConnection, Connection } from 'typeorm';
+import { CrudProvider } from './src/providers/Crud.provider';
 export class Server {
   private app;
+  private routerController;
+  private crudProvider;
   constructor() {
     this.app = express();
     this.configuration();
     this.connect();
+    this.crudProvider = new CrudProvider();
+    this.routerController = new RouterController(this.crudProvider);
   }
   public configuration(): void {
     this.app.set('port', process.env.PORT || 3000);
