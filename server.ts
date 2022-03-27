@@ -1,18 +1,20 @@
 import express from 'express';
 import 'reflect-metadata';
-import { RouterController } from 'src/Router.controller';
+import { RouterController } from './src/Router.controller';
 import { createConnection, Connection } from 'typeorm';
 import { CrudProvider } from './src/providers/Crud.provider';
 export class Server {
   private app;
-  private routerController;
+  private connection;
   private crudProvider;
+  private routerController;
   constructor() {
     this.app = express();
     this.configuration();
-    this.connect();
+    this.connection = this.connect();
     this.crudProvider = new CrudProvider();
     this.routerController = new RouterController(this.crudProvider);
+    this.routes();
   }
   public configuration(): void {
     this.app.set('port', process.env.PORT || 3000);
@@ -33,15 +35,16 @@ export class Server {
       database: 'crud_express',
       synchronize: true,
       logging: false,
-      entities: ['src/entity/**/*.ts'],
+      entities: ['src/entities/**/*.ts'],
       migrations: ['src/migration/**/*.ts'],
-      subscribers: ['src/subscriber/**/*.ts'],
       cli: {
-        entitiesDir: 'src/entity',
+        entitiesDir: 'src/entities',
         migrationsDir: 'src/migration',
-        subscribersDir: 'src/subscriber',
       },
     });
+  }
+  public async routes() {
+    this.app.use('/api/crud', this.routerController.router);
   }
 }
 const server = new Server();
