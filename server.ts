@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { RouterController } from './src/Router.controller';
 import { createConnection, Connection } from 'typeorm';
 import { CrudProvider } from './src/providers/Crud.provider';
+import swaggerUi from 'swagger-ui-express';
 export class Server {
   private app;
   private connection;
@@ -19,6 +20,15 @@ export class Server {
   public configuration(): void {
     this.app.set('port', process.env.PORT || 3000);
     this.app.use(express.json());
+    this.app.use(
+      '/docs',
+      swaggerUi.serve,
+      swaggerUi.setup(undefined, {
+        swaggerOptions: {
+          url: '/swagger.json',
+        },
+      }),
+    );
   }
   public start(): void {
     this.app.listen(this.app.get('port'), () => {
